@@ -1,10 +1,17 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:whatsapp/pages/camara.dart';
 import 'package:whatsapp/pages/chats.dart';
+import 'package:whatsapp/pages/contacts.dart';
 import 'package:whatsapp/pages/status.dart';
 import 'package:whatsapp/pages/calls.dart';
 
 class WhatsAppHome extends StatefulWidget {
+  List<CameraDescription> cameras;
+
+  // Constructor
+  WhatsAppHome(this.cameras);
+
   @override
   _WhatsAppHomeState createState() => _WhatsAppHomeState();
 }
@@ -37,11 +44,24 @@ class _WhatsAppHomeState extends State<WhatsAppHome> with SingleTickerProviderSt
       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
-          Camera(),
+          Camera(widget.cameras),
           ChatList(),
           Status(),
           Llamadas()
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).accentColor,
+        child: Icon(
+          Icons.message,
+          color: Colors.white,
+          ),
+          onPressed: (){
+            var route =MaterialPageRoute(
+              builder: (BuildContext context) => Contacts()
+            );
+            Navigator.of(context).push(route);
+          },
       ),
     );
   }
