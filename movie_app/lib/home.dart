@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/common/HttpHandler.dart';
+import 'package:movie_app/common/MediaProvider.dart';
+import 'package:movie_app/media_list.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -6,6 +9,24 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+  final MediaProvider movieProvider = MovieProvider();
+  final MediaProvider showProvider = MovieProvider();
+
+  MediaType mediaType = MediaType.movie;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadJson();
+  }
+
+
+  _loadJson() async {
+    var data = await HttpHandler().fetchMovies();
+    print(data);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,14 +46,24 @@ class _HomeState extends State<Home> {
             child: Material()),
             ListTile(
               title: Text("Películas"),
+              selected: mediaType == MediaType.movie,
               trailing: Icon(Icons.local_movies),
+              onTap: (){
+                _changeMediaType(MediaType.movie);
+                Navigator.of(context).pop();
+              },
             ),
             Divider(
               height: 5.0,
             ),
             ListTile(
+              selected: mediaType == MediaType.show,
               title: Text("Televisión"),
               trailing: Icon(Icons.live_tv),
+              onTap: (){
+                _changeMediaType(MediaType.show);
+                Navigator.of(context).pop();
+              },
             ),
             Divider(
               height: 5.0,
@@ -44,6 +75,11 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
+      ),
+      body: PageView(
+        children: <Widget>[
+          MediaList()
+        ],
       ),
         
       bottomNavigationBar: BottomNavigationBar(
@@ -66,5 +102,12 @@ class _HomeState extends State<Home> {
           title: Text("Mejor valoradas")
         )
       ];
+    }
+    void _changeMediaType(MediaType type){
+      if(mediaType != type){
+        setState(() {
+          mediaType = type;
+        });
+      }
     }
 }
